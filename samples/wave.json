@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "effectType": "rotating_barrage",
+  "name": "波状弾幕",
+  "durationSec": 10,
+  "frameRate": 30,
+  "seed": 44,
+  "loop": true,
+  "stage": {
+    "backgroundColor": "#05060d",
+    "bloom": {
+      "enabled": true,
+      "strength": 1.15,
+      "radius": 0.55,
+      "threshold": 0.12
+    },
+    "muzzleFlash": {
+      "enabled": true,
+      "color": "#ffffff",
+      "intensity": 2,
+      "durationSec": 0.12,
+      "size": 0.5
+    }
+  },
+  "camera": {
+    "position": [
+      0,
+      2.5,
+      9
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "fovDeg": 50,
+    "orbitSpeedDeg": 6,
+    "orbitAxis": [
+      0,
+      1,
+      0
+    ]
+  },
+  "layers": [
+    {
+      "id": "layer-5-j22me",
+      "name": "波打つリング",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 10,
+        "interval": 0.12,
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "spreadAngleDeg": 150,
+        "rotationAxis": [
+          0,
+          1,
+          0
+        ],
+        "rotationSpeedDeg": 10,
+        "waveAmplitudeDeg": 45,
+        "waveFrequencyHz": 0.35,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 2,
+        "spreadJitterDeg": 2
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#bfffb0",
+        "colorEnd": "#2fd0a0",
+        "speed": 3.4,
+        "speedJitter": 0.05,
+        "acceleration": -0.15,
+        "lifetime": 3.8,
+        "glowIntensity": 1.5,
+        "trail": "line",
+        "trailDurationSec": 0.35,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    }
+  ]
+}

@@ -1,0 +1,205 @@
+{
+  "schemaVersion": "1.0.0",
+  "effectType": "rotating_barrage",
+  "name": "多層立体弾幕",
+  "durationSec": 10,
+  "frameRate": 30,
+  "seed": 55,
+  "loop": true,
+  "stage": {
+    "backgroundColor": "#05060d",
+    "bloom": {
+      "enabled": true,
+      "strength": 1.15,
+      "radius": 0.55,
+      "threshold": 0.12
+    },
+    "muzzleFlash": {
+      "enabled": true,
+      "color": "#ffffff",
+      "intensity": 2,
+      "durationSec": 0.12,
+      "size": 0.5
+    }
+  },
+  "camera": {
+    "position": [
+      0,
+      3,
+      11
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "fovDeg": 50,
+    "orbitSpeedDeg": 8,
+    "orbitAxis": [
+      0,
+      1,
+      0
+    ]
+  },
+  "layers": [
+    {
+      "id": "layer-6-aidii",
+      "name": "層A（垂直軸）",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 5,
+        "interval": 0.1,
+        "direction": [
+          0,
+          1,
+          0
+        ],
+        "spreadAngleDeg": 50,
+        "rotationAxis": [
+          0,
+          1,
+          0
+        ],
+        "rotationSpeedDeg": 90,
+        "waveAmplitudeDeg": 0,
+        "waveFrequencyHz": 0.5,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 2,
+        "spreadJitterDeg": 2
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#ffe08a",
+        "colorEnd": "#ff6f3f",
+        "speed": 3.2,
+        "speedJitter": 0.05,
+        "acceleration": -0.15,
+        "lifetime": 3.6,
+        "glowIntensity": 1.6,
+        "trail": "line",
+        "trailDurationSec": 0.35,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    },
+    {
+      "id": "layer-7-h2g0a",
+      "name": "層B（水平軸）",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 5,
+        "interval": 0.1,
+        "direction": [
+          1,
+          0,
+          0
+        ],
+        "spreadAngleDeg": 50,
+        "rotationAxis": [
+          0,
+          0,
+          1
+        ],
+        "rotationSpeedDeg": -90,
+        "waveAmplitudeDeg": 0,
+        "waveFrequencyHz": 0.5,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 2,
+        "spreadJitterDeg": 2
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#8affc9",
+        "colorEnd": "#2fb5ff",
+        "speed": 3.2,
+        "speedJitter": 0.05,
+        "acceleration": -0.15,
+        "lifetime": 3.6,
+        "glowIntensity": 1.6,
+        "trail": "line",
+        "trailDurationSec": 0.35,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    },
+    {
+      "id": "layer-8-wfwfi",
+      "name": "層C（斜め軸）",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 4,
+        "interval": 0.14,
+        "direction": [
+          0,
+          0,
+          1
+        ],
+        "spreadAngleDeg": 40,
+        "rotationAxis": [
+          1,
+          1,
+          0
+        ],
+        "rotationSpeedDeg": 70,
+        "waveAmplitudeDeg": 0,
+        "waveFrequencyHz": 0.5,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 2,
+        "spreadJitterDeg": 2
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#d6a8ff",
+        "colorEnd": "#6a3fff",
+        "speed": 2.6,
+        "speedJitter": 0.05,
+        "acceleration": -0.15,
+        "lifetime": 3.8,
+        "glowIntensity": 1.6,
+        "trail": "line",
+        "trailDurationSec": 0.35,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    }
+  ]
+}

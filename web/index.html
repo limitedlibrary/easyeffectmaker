@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>簡単エフェクトメーカー #01：3D回転弾幕</title>
+  </head>
+  <body>
+    <div id="app">
+      <header id="app-header">
+        <h1>簡単エフェクトメーカー <span class="header-sub">#01：3D回転弾幕</span></h1>
+        <div class="mobile-tabs">
+          <button type="button" class="mobile-tab active" data-tab="viewport">プレビュー</button>
+          <button type="button" class="mobile-tab" data-tab="settings">設定</button>
+        </div>
+      </header>
+      <div id="layout">
+        <div id="viewport"></div>
+        <div id="sidebar"></div>
+      </div>
+      <div id="transport-host"></div>
+    </div>
+    <script type="module" src="./src/main.ts"></script>
+  </body>
+</html>
