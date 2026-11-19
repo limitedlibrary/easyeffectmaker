@@ -1,0 +1,152 @@
+{
+  "schemaVersion": "1.0.0",
+  "effectType": "rotating_barrage",
+  "name": "二重回転弾幕",
+  "durationSec": 10,
+  "frameRate": 30,
+  "seed": 33,
+  "loop": true,
+  "stage": {
+    "backgroundColor": "#05060d",
+    "bloom": {
+      "enabled": true,
+      "strength": 1.15,
+      "radius": 0.55,
+      "threshold": 0.12
+    },
+    "muzzleFlash": {
+      "enabled": true,
+      "color": "#ffffff",
+      "intensity": 2,
+      "durationSec": 0.12,
+      "size": 0.5
+    }
+  },
+  "camera": {
+    "position": [
+      0,
+      2.5,
+      9
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "fovDeg": 50,
+    "orbitSpeedDeg": 6,
+    "orbitAxis": [
+      0,
+      1,
+      0
+    ]
+  },
+  "layers": [
+    {
+      "id": "layer-3-m8ckg",
+      "name": "外側リング（時計回り）",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 4,
+        "interval": 0.09,
+        "direction": [
+          0,
+          1,
+          0
+        ],
+        "spreadAngleDeg": 70,
+        "rotationAxis": [
+          0,
+          1,
+          0
+        ],
+        "rotationSpeedDeg": 120,
+        "waveAmplitudeDeg": 0,
+        "waveFrequencyHz": 0.5,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 2,
+        "spreadJitterDeg": 2
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#ff9fd6",
+        "colorEnd": "#ff3f9e",
+        "speed": 3.8,
+        "speedJitter": 0.05,
+        "acceleration": -0.15,
+        "lifetime": 3.4,
+        "glowIntensity": 1.6,
+        "trail": "line",
+        "trailDurationSec": 0.35,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    },
+    {
+      "id": "layer-4-tu87e",
+      "name": "内側リング（反時計回り）",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 3,
+        "interval": 0.1,
+        "direction": [
+          0,
+          1,
+          0
+        ],
+        "spreadAngleDeg": 30,
+        "rotationAxis": [
+          0,
+          1,
+          0
+        ],
+        "rotationSpeedDeg": -150,
+        "waveAmplitudeDeg": 0,
+        "waveFrequencyHz": 0.5,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 2,
+        "spreadJitterDeg": 2
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#9fd6ff",
+        "colorEnd": "#3f6fff",
+        "speed": 2.6,
+        "speedJitter": 0.05,
+        "acceleration": -0.15,
+        "lifetime": 3.4,
+        "glowIntensity": 1.6,
+        "trail": "line",
+        "trailDurationSec": 0.35,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    }
+  ]
+}

@@ -1,0 +1,904 @@
+{
+  "description": "Hand-verifiable single-bullet-per-shot rotation case with rotationAxis == direction; see docs/json-spec.md 6.2",
+  "doc": {
+    "schemaVersion": "1.0.0",
+    "effectType": "rotating_barrage",
+    "name": "回転サニティチェック",
+    "durationSec": 10,
+    "frameRate": 30,
+    "seed": 0,
+    "loop": false,
+    "stage": {
+      "backgroundColor": "#05060d",
+      "bloom": {
+        "enabled": true,
+        "strength": 1.15,
+        "radius": 0.55,
+        "threshold": 0.12
+      },
+      "muzzleFlash": {
+        "enabled": true,
+        "color": "#ffffff",
+        "intensity": 2,
+        "durationSec": 0.12,
+        "size": 0.5
+      }
+    },
+    "camera": {
+      "position": [
+        0,
+        2.5,
+        9
+      ],
+      "target": [
+        0,
+        0,
+        0
+      ],
+      "fovDeg": 50,
+      "orbitSpeedDeg": 6,
+      "orbitAxis": [
+        0,
+        1,
+        0
+      ]
+    },
+    "layers": [
+      {
+        "id": "layer-9-njzng",
+        "name": "回転サニティチェック",
+        "visible": true,
+        "startDelaySec": 0,
+        "emitter": {
+          "count": 1,
+          "interval": 1,
+          "direction": [
+            0,
+            1,
+            0
+          ],
+          "spreadAngleDeg": 60,
+          "rotationAxis": [
+            0,
+            1,
+            0
+          ],
+          "rotationSpeedDeg": 90,
+          "waveAmplitudeDeg": 0,
+          "waveFrequencyHz": 0,
+          "waveAxis": [
+            1,
+            0,
+            0
+          ],
+          "position": [
+            0,
+            0,
+            0
+          ],
+          "emissionDuration": 10,
+          "azimuthJitterDeg": 0,
+          "spreadJitterDeg": 0
+        },
+        "bullet": {
+          "shape": "sphere",
+          "size": 0.1,
+          "color": "#ffffff",
+          "colorEnd": "#ffffff",
+          "speed": 1,
+          "speedJitter": 0,
+          "acceleration": 0,
+          "lifetime": 10,
+          "glowIntensity": 1,
+          "trail": "line",
+          "trailDurationSec": 2,
+          "spawnAnim": "none",
+          "spawnAnimFrac": 0,
+          "despawnAnimFrac": 0
+        }
+      }
+    ]
+  },
+  "samples": [
+    {
+      "time": 0,
+      "frame": {
+        "time": 0,
+        "bullets": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "age": 0,
+            "lifetime": 10,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "direction": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          }
+        ],
+        "trails": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          }
+        ],
+        "flashes": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": -1,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "progress": 0,
+            "color": "#ffffff",
+            "intensity": 2,
+            "size": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "time": 1,
+      "frame": {
+        "time": 1,
+        "bullets": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "age": 1,
+            "lifetime": 10,
+            "position": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "direction": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "age": 0,
+            "lifetime": 10,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "direction": [
+              0.5,
+              0.866025,
+              0
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          }
+        ],
+        "trails": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0.866025,
+                  0.5
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          }
+        ],
+        "flashes": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": -1,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "progress": 0,
+            "color": "#ffffff",
+            "intensity": 2,
+            "size": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "time": 2,
+      "frame": {
+        "time": 2,
+        "bullets": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "age": 2,
+            "lifetime": 10,
+            "position": [
+              0,
+              1.732051,
+              1
+            ],
+            "direction": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "age": 1,
+            "lifetime": 10,
+            "position": [
+              0.5,
+              0.866025,
+              0
+            ],
+            "direction": [
+              0.5,
+              0.866025,
+              0
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 2,
+            "bulletIndex": 0,
+            "age": 0,
+            "lifetime": 10,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "direction": [
+              0,
+              0.866025,
+              -0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          }
+        ],
+        "trails": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  1.732051,
+                  1
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0.5,
+                  0.866025,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 2,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          }
+        ],
+        "flashes": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": -1,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "progress": 0,
+            "color": "#ffffff",
+            "intensity": 2,
+            "size": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "time": 3,
+      "frame": {
+        "time": 3,
+        "bullets": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "age": 3,
+            "lifetime": 10,
+            "position": [
+              0,
+              2.598076,
+              1.5
+            ],
+            "direction": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "age": 2,
+            "lifetime": 10,
+            "position": [
+              1,
+              1.732051,
+              0
+            ],
+            "direction": [
+              0.5,
+              0.866025,
+              0
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 2,
+            "bulletIndex": 0,
+            "age": 1,
+            "lifetime": 10,
+            "position": [
+              0,
+              0.866025,
+              -0.5
+            ],
+            "direction": [
+              0,
+              0.866025,
+              -0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 3,
+            "bulletIndex": 0,
+            "age": 0,
+            "lifetime": 10,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "direction": [
+              -0.5,
+              0.866025,
+              0
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          }
+        ],
+        "trails": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0.866025,
+                  0.5
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  2.598076,
+                  1.5
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  1,
+                  1.732051,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 2,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0.866025,
+                  -0.5
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 3,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          }
+        ],
+        "flashes": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": -1,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "progress": 0,
+            "color": "#ffffff",
+            "intensity": 2,
+            "size": 0.5
+          }
+        ]
+      }
+    },
+    {
+      "time": 4,
+      "frame": {
+        "time": 4,
+        "bullets": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "age": 4,
+            "lifetime": 10,
+            "position": [
+              0,
+              3.464102,
+              2
+            ],
+            "direction": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "age": 3,
+            "lifetime": 10,
+            "position": [
+              1.5,
+              2.598076,
+              0
+            ],
+            "direction": [
+              0.5,
+              0.866025,
+              0
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 2,
+            "bulletIndex": 0,
+            "age": 2,
+            "lifetime": 10,
+            "position": [
+              0,
+              1.732051,
+              -1
+            ],
+            "direction": [
+              0,
+              0.866025,
+              -0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 3,
+            "bulletIndex": 0,
+            "age": 1,
+            "lifetime": 10,
+            "position": [
+              -0.5,
+              0.866025,
+              0
+            ],
+            "direction": [
+              -0.5,
+              0.866025,
+              0
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 4,
+            "bulletIndex": 0,
+            "age": 0,
+            "lifetime": 10,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "direction": [
+              0,
+              0.866025,
+              0.5
+            ],
+            "color": "#ffffff",
+            "opacity": 1,
+            "scale": 1,
+            "glowIntensity": 1
+          }
+        ],
+        "trails": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 0,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  1.732051,
+                  1
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  3.464102,
+                  2
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 1,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0.5,
+                  0.866025,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  1.5,
+                  2.598076,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 2,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  1.732051,
+                  -1
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 3,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  -0.5,
+                  0.866025,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          },
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": 4,
+            "bulletIndex": 0,
+            "color": "#ffffff",
+            "points": [
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 0
+              },
+              {
+                "position": [
+                  0,
+                  0,
+                  0
+                ],
+                "t": 1
+              }
+            ]
+          }
+        ],
+        "flashes": [
+          {
+            "layerId": "layer-9-njzng",
+            "shotIndex": -1,
+            "position": [
+              0,
+              0,
+              0
+            ],
+            "progress": 0,
+            "color": "#ffffff",
+            "intensity": 2,
+            "size": 0.5
+          }
+        ]
+      }
+    }
+  ]
+}

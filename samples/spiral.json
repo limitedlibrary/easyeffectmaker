@@ -1,0 +1,99 @@
+{
+  "schemaVersion": "1.0.0",
+  "effectType": "rotating_barrage",
+  "name": "螺旋状弾幕",
+  "durationSec": 10,
+  "frameRate": 30,
+  "seed": 22,
+  "loop": true,
+  "stage": {
+    "backgroundColor": "#05060d",
+    "bloom": {
+      "enabled": true,
+      "strength": 1.15,
+      "radius": 0.55,
+      "threshold": 0.12
+    },
+    "muzzleFlash": {
+      "enabled": true,
+      "color": "#ffffff",
+      "intensity": 2,
+      "durationSec": 0.12,
+      "size": 0.5
+    }
+  },
+  "camera": {
+    "position": [
+      0,
+      2.5,
+      9
+    ],
+    "target": [
+      0,
+      0,
+      0
+    ],
+    "fovDeg": 50,
+    "orbitSpeedDeg": 6,
+    "orbitAxis": [
+      0,
+      1,
+      0
+    ]
+  },
+  "layers": [
+    {
+      "id": "layer-2-napco",
+      "name": "螺旋アーム",
+      "visible": true,
+      "startDelaySec": 0,
+      "emitter": {
+        "count": 3,
+        "interval": 0.05,
+        "direction": [
+          0,
+          1,
+          0
+        ],
+        "spreadAngleDeg": 46,
+        "rotationAxis": [
+          0,
+          1,
+          0
+        ],
+        "rotationSpeedDeg": 160,
+        "waveAmplitudeDeg": 0,
+        "waveFrequencyHz": 0.5,
+        "waveAxis": [
+          1,
+          0,
+          0
+        ],
+        "position": [
+          0,
+          0,
+          0
+        ],
+        "emissionDuration": 8,
+        "azimuthJitterDeg": 1.5,
+        "spreadJitterDeg": 1.5
+      },
+      "bullet": {
+        "shape": "sphere",
+        "size": 0.12,
+        "color": "#9fffe0",
+        "colorEnd": "#3f8dff",
+        "speed": 3.6,
+        "speedJitter": 0.05,
+        "acceleration": -0.1,
+        "lifetime": 3.6,
+        "glowIntensity": 1.7,
+        "trail": "line",
+        "trailDurationSec": 0.5,
+        "spawnAnim": "fadeScale",
+        "spawnAnimFrac": 0.12,
+        "despawnAnimFrac": 0.3
+      }
+    }
+  ]
+}
