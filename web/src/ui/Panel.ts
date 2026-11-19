@@ -13,6 +13,7 @@ import {
   vectorControl,
 } from './controls';
 import type { BulletShape, SpawnAnim, TrailMode } from '../core/types';
+import { FRAME_RATE_OPTIONS, LIMITS } from '../core/limits';
 
 export interface PanelCallbacks {
   isFreeCamera(): boolean;
@@ -62,7 +63,7 @@ export class Panel {
 
     section.appendChild(textControl('エフェクト名', doc.name, (v) => (doc.name = v)).el);
     section.appendChild(
-      sliderControl('再生時間(秒)', doc.durationSec, 1, 30, 0.5, (v) => {
+      sliderControl('再生時間(秒)', doc.durationSec, ...LIMITS.doc.durationSec, 0.5, (v) => {
         doc.durationSec = v;
         this.state.notifyMeta();
       }).el,
@@ -71,7 +72,7 @@ export class Panel {
       selectControl(
         'フレームレート',
         String(doc.frameRate) as any,
-        [24, 30, 60, 120].map((v) => ({ value: String(v) as any, label: `${v} fps` })),
+        FRAME_RATE_OPTIONS.map((v) => ({ value: String(v) as any, label: `${v} fps` })),
         (v) => (doc.frameRate = Number(v)),
       ).el,
     );
@@ -147,28 +148,42 @@ export class Panel {
 
   private buildEmitterSection(): HTMLElement {
     const section = sectionEl('発射設定');
-    const emitter = this.state.activeLayer.emitter;
+    const layer = this.state.activeLayer;
+    const emitter = layer.emitter;
 
-    section.appendChild(sliderControl('同時発射数', emitter.count, 1, 48, 1, (v) => (emitter.count = Math.round(v))).el);
-    section.appendChild(sliderControl('発射間隔(秒)', emitter.interval, 0.02, 2, 0.01, (v) => (emitter.interval = v)).el);
+    section.appendChild(
+      sliderControl('開始遅延(秒)', layer.startDelaySec, ...LIMITS.layer.startDelaySec, 0.1, (v) => (layer.startDelaySec = v)).el,
+    );
+    section.appendChild(sliderControl('同時発射数', emitter.count, ...LIMITS.emitter.count, 1, (v) => (emitter.count = Math.round(v))).el);
+    section.appendChild(sliderControl('発射間隔(秒)', emitter.interval, ...LIMITS.emitter.interval, 0.01, (v) => (emitter.interval = v)).el);
     section.appendChild(vectorControl('発射方向', emitter.direction, (v) => (emitter.direction = v)).el);
-    section.appendChild(sliderControl('拡散角度(度)', emitter.spreadAngleDeg, 0, 360, 1, (v) => (emitter.spreadAngleDeg = v)).el);
+    section.appendChild(
+      sliderControl('拡散角度(度)', emitter.spreadAngleDeg, ...LIMITS.emitter.spreadAngleDeg, 1, (v) => (emitter.spreadAngleDeg = v)).el,
+    );
     section.appendChild(vectorControl('回転軸', emitter.rotationAxis, (v) => (emitter.rotationAxis = v)).el);
     section.appendChild(
-      sliderControl('発射方向の回転速度(度/秒)', emitter.rotationSpeedDeg, -360, 360, 1, (v) => (emitter.rotationSpeedDeg = v)).el,
+      sliderControl('発射方向の回転速度(度/秒)', emitter.rotationSpeedDeg, ...LIMITS.emitter.rotationSpeedDeg, 1, (v) => (emitter.rotationSpeedDeg = v))
+        .el,
     );
-    section.appendChild(sliderControl('波の振幅(度)', emitter.waveAmplitudeDeg, 0, 180, 1, (v) => (emitter.waveAmplitudeDeg = v)).el);
-    section.appendChild(sliderControl('波の周波数(Hz)', emitter.waveFrequencyHz, 0, 3, 0.01, (v) => (emitter.waveFrequencyHz = v)).el);
+    section.appendChild(
+      sliderControl('波の振幅(度)', emitter.waveAmplitudeDeg, ...LIMITS.emitter.waveAmplitudeDeg, 1, (v) => (emitter.waveAmplitudeDeg = v)).el,
+    );
+    section.appendChild(
+      sliderControl('波の周波数(Hz)', emitter.waveFrequencyHz, ...LIMITS.emitter.waveFrequencyHz, 0.01, (v) => (emitter.waveFrequencyHz = v)).el,
+    );
     section.appendChild(vectorControl('波の回転軸', emitter.waveAxis, (v) => (emitter.waveAxis = v)).el);
     section.appendChild(vectorControl('発射位置', emitter.position, (v) => (emitter.position = v), 0.5).el);
     section.appendChild(
-      sliderControl('発射継続時間(秒)', emitter.emissionDuration, 0.1, 30, 0.1, (v) => (emitter.emissionDuration = v)).el,
+      sliderControl('発射継続時間(秒)', emitter.emissionDuration, ...LIMITS.emitter.emissionDuration, 0.1, (v) => (emitter.emissionDuration = v))
+        .el,
     );
     section.appendChild(
-      sliderControl('方向のばらつき(度)', emitter.azimuthJitterDeg, 0, 45, 0.5, (v) => (emitter.azimuthJitterDeg = v)).el,
+      sliderControl('方向のばらつき(度)', emitter.azimuthJitterDeg, ...LIMITS.emitter.azimuthJitterDeg, 0.5, (v) => (emitter.azimuthJitterDeg = v))
+        .el,
     );
     section.appendChild(
-      sliderControl('拡散のばらつき(度)', emitter.spreadJitterDeg, 0, 45, 0.5, (v) => (emitter.spreadJitterDeg = v)).el,
+      sliderControl('拡散のばらつき(度)', emitter.spreadJitterDeg, ...LIMITS.emitter.spreadJitterDeg, 0.5, (v) => (emitter.spreadJitterDeg = v))
+        .el,
     );
     return section;
   }
@@ -190,14 +205,14 @@ export class Panel {
         (v) => (bullet.shape = v),
       ).el,
     );
-    section.appendChild(sliderControl('大きさ', bullet.size, 0.02, 1, 0.01, (v) => (bullet.size = v)).el);
+    section.appendChild(sliderControl('大きさ', bullet.size, ...LIMITS.bullet.size, 0.01, (v) => (bullet.size = v)).el);
     section.appendChild(colorControl('色（開始）', bullet.color, (v) => (bullet.color = v)).el);
     section.appendChild(colorControl('色（終了）', bullet.colorEnd, (v) => (bullet.colorEnd = v)).el);
-    section.appendChild(sliderControl('移動速度', bullet.speed, 0, 20, 0.1, (v) => (bullet.speed = v)).el);
-    section.appendChild(sliderControl('速度のばらつき', bullet.speedJitter, 0, 1, 0.01, (v) => (bullet.speedJitter = v)).el);
-    section.appendChild(sliderControl('加速度', bullet.acceleration, -10, 10, 0.1, (v) => (bullet.acceleration = v)).el);
-    section.appendChild(sliderControl('寿命(秒)', bullet.lifetime, 0.2, 10, 0.1, (v) => (bullet.lifetime = v)).el);
-    section.appendChild(sliderControl('発光強度', bullet.glowIntensity, 0, 5, 0.1, (v) => (bullet.glowIntensity = v)).el);
+    section.appendChild(sliderControl('移動速度', bullet.speed, ...LIMITS.bullet.speed, 0.1, (v) => (bullet.speed = v)).el);
+    section.appendChild(sliderControl('速度のばらつき', bullet.speedJitter, ...LIMITS.bullet.speedJitter, 0.01, (v) => (bullet.speedJitter = v)).el);
+    section.appendChild(sliderControl('加速度', bullet.acceleration, ...LIMITS.bullet.acceleration, 0.1, (v) => (bullet.acceleration = v)).el);
+    section.appendChild(sliderControl('寿命(秒)', bullet.lifetime, ...LIMITS.bullet.lifetime, 0.1, (v) => (bullet.lifetime = v)).el);
+    section.appendChild(sliderControl('発光強度', bullet.glowIntensity, ...LIMITS.bullet.glowIntensity, 0.1, (v) => (bullet.glowIntensity = v)).el);
     section.appendChild(
       selectControl<TrailMode>(
         '軌跡の有無',
@@ -209,7 +224,9 @@ export class Panel {
         (v) => (bullet.trail = v),
       ).el,
     );
-    section.appendChild(sliderControl('軌跡の長さ(秒)', bullet.trailDurationSec, 0, 2, 0.05, (v) => (bullet.trailDurationSec = v)).el);
+    section.appendChild(
+      sliderControl('軌跡の長さ(秒)', bullet.trailDurationSec, ...LIMITS.bullet.trailDurationSec, 0.05, (v) => (bullet.trailDurationSec = v)).el,
+    );
     return section;
   }
 
@@ -221,17 +238,30 @@ export class Panel {
     section.appendChild(colorControl('背景色', stage.backgroundColor, (v) => (stage.backgroundColor = v)).el);
 
     section.appendChild(checkboxControl('Bloom（発光表現）を有効化', stage.bloom.enabled, (v) => (stage.bloom.enabled = v)).el);
-    section.appendChild(sliderControl('Bloomの強さ', stage.bloom.strength, 0, 3, 0.05, (v) => (stage.bloom.strength = v)).el);
-    section.appendChild(sliderControl('Bloomの範囲', stage.bloom.radius, 0, 1, 0.01, (v) => (stage.bloom.radius = v)).el);
-    section.appendChild(sliderControl('Bloomのしきい値', stage.bloom.threshold, 0, 1, 0.01, (v) => (stage.bloom.threshold = v)).el);
+    section.appendChild(sliderControl('Bloomの強さ', stage.bloom.strength, ...LIMITS.stage.bloomStrength, 0.05, (v) => (stage.bloom.strength = v)).el);
+    section.appendChild(sliderControl('Bloomの範囲', stage.bloom.radius, ...LIMITS.stage.bloomRadius, 0.01, (v) => (stage.bloom.radius = v)).el);
+    section.appendChild(
+      sliderControl('Bloomのしきい値', stage.bloom.threshold, ...LIMITS.stage.bloomThreshold, 0.01, (v) => (stage.bloom.threshold = v)).el,
+    );
 
     section.appendChild(checkboxControl('発射時の光を有効化', stage.muzzleFlash.enabled, (v) => (stage.muzzleFlash.enabled = v)).el);
     section.appendChild(colorControl('発射時の光の色', stage.muzzleFlash.color, (v) => (stage.muzzleFlash.color = v)).el);
-    section.appendChild(sliderControl('発射時の光の強さ', stage.muzzleFlash.intensity, 0, 5, 0.1, (v) => (stage.muzzleFlash.intensity = v)).el);
     section.appendChild(
-      sliderControl('発射時の光の持続時間(秒)', stage.muzzleFlash.durationSec, 0, 1, 0.01, (v) => (stage.muzzleFlash.durationSec = v)).el,
+      sliderControl('発射時の光の強さ', stage.muzzleFlash.intensity, ...LIMITS.stage.muzzleIntensity, 0.1, (v) => (stage.muzzleFlash.intensity = v))
+        .el,
     );
-    section.appendChild(sliderControl('発射時の光の大きさ', stage.muzzleFlash.size, 0, 3, 0.05, (v) => (stage.muzzleFlash.size = v)).el);
+    section.appendChild(
+      sliderControl(
+        '発射時の光の持続時間(秒)',
+        stage.muzzleFlash.durationSec,
+        ...LIMITS.stage.muzzleDurationSec,
+        0.01,
+        (v) => (stage.muzzleFlash.durationSec = v),
+      ).el,
+    );
+    section.appendChild(
+      sliderControl('発射時の光の大きさ', stage.muzzleFlash.size, ...LIMITS.stage.muzzleSize, 0.05, (v) => (stage.muzzleFlash.size = v)).el,
+    );
 
     section.appendChild(
       selectControl<SpawnAnim>(
@@ -246,13 +276,19 @@ export class Panel {
         (v) => (bullet.spawnAnim = v),
       ).el,
     );
-    section.appendChild(sliderControl('出現時間の割合', bullet.spawnAnimFrac, 0, 0.5, 0.01, (v) => (bullet.spawnAnimFrac = v)).el);
-    section.appendChild(sliderControl('消滅時間の割合', bullet.despawnAnimFrac, 0, 0.5, 0.01, (v) => (bullet.despawnAnimFrac = v)).el);
+    section.appendChild(
+      sliderControl('出現時間の割合', bullet.spawnAnimFrac, ...LIMITS.bullet.spawnAnimFrac, 0.01, (v) => (bullet.spawnAnimFrac = v)).el,
+    );
+    section.appendChild(
+      sliderControl('消滅時間の割合', bullet.despawnAnimFrac, ...LIMITS.bullet.despawnAnimFrac, 0.01, (v) => (bullet.despawnAnimFrac = v)).el,
+    );
 
     section.appendChild(vectorControl('カメラ位置', camera.position, (v) => (camera.position = v), 0.5).el);
     section.appendChild(vectorControl('カメラ注視点', camera.target, (v) => (camera.target = v), 0.5).el);
-    section.appendChild(sliderControl('カメラ視野角(度)', camera.fovDeg, 20, 100, 1, (v) => (camera.fovDeg = v)).el);
-    section.appendChild(sliderControl('カメラの回転速度(度/秒)', camera.orbitSpeedDeg, -60, 60, 1, (v) => (camera.orbitSpeedDeg = v)).el);
+    section.appendChild(sliderControl('カメラ視野角(度)', camera.fovDeg, ...LIMITS.camera.fovDeg, 1, (v) => (camera.fovDeg = v)).el);
+    section.appendChild(
+      sliderControl('カメラの回転速度(度/秒)', camera.orbitSpeedDeg, ...LIMITS.camera.orbitSpeedDeg, 1, (v) => (camera.orbitSpeedDeg = v)).el,
+    );
     section.appendChild(vectorControl('カメラの回転軸', camera.orbitAxis, (v) => (camera.orbitAxis = v)).el);
 
     const freeCam = checkboxControl('フリーカメラ（マウスでプレビュー操作、保存されません）', this.callbacks.isFreeCamera(), (v) =>

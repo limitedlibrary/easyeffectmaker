@@ -45,6 +45,8 @@ npm run dev       # 開発サーバー起動（ http://localhost:5173 ）
 npm run typecheck # 型チェックのみ
 npm run build     # 型チェック + 本番ビルド（web/dist に出力）
 npm run preview   # ビルド結果をローカルで確認
+npm test          # 自動テスト（決定論性・回転の正しさ・ゴールデンフィクスチャ・入力検証）
+npm run gen:golden # ゴールデンフィクスチャ（web/test/golden/）の再生成
 ```
 
 ### 技術スタック

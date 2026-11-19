@@ -1,5 +1,6 @@
 import type { EffectDocument, EffectLayer } from '../core/types';
 import { SCHEMA_VERSION, makeLayer } from '../core/presets';
+import { sanitizeDocument } from './sanitize';
 
 export interface ValidationResult {
   ok: boolean;
@@ -85,6 +86,13 @@ export function normalizeDocument(input: unknown, fallback: EffectDocument): Val
     schemaVersion: SCHEMA_VERSION,
     layers,
   };
+
+  // Structural merge above only guarantees the right JS *type* for every
+  // field (mergeDefaults falls back to the default on a type mismatch) --
+  // it does not guarantee values are in range, enums are valid members, or
+  // layer ids are unique. sanitizeDocument closes that gap and records a
+  // Japanese warning for every value it had to adjust.
+  sanitizeDocument(doc, errors);
 
   return { ok: errors.length === 0, errors, doc };
 }

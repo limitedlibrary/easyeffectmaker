@@ -23,13 +23,20 @@ export interface EmitterConfig {
   direction: Vec3;
   /** Full cone spread angle in degrees, 0 = all bullets share one direction (拡散角度). */
   spreadAngleDeg: number;
-  /** Axis the emission direction rotates around (normalized), (0,1,0) = world up. */
+  /**
+   * Axis each bullet's already-placed direction is spun around as shot time
+   * advances (normalized), (0,1,0) = world up. When this equals `direction`
+   * (the common case), the effect is a classic rotating "curve shot": the
+   * ring of bullets spins in place. When it differs, the whole emission cone
+   * precesses around this axis instead. See docs/json-spec.md 5.3.
+   */
   rotationAxis: Vec3;
-  /** Rotation speed of the emission direction, degrees/second (発射方向の回転速度). */
+  /** Rotation speed applied around `rotationAxis`, degrees/second (発射方向の回転速度). */
   rotationSpeedDeg: number;
   /**
-   * Extra sinusoidal "wave" tilt applied on top of the steady rotation, to
-   * produce undulating / wave-shaped barrages. Amplitude in degrees, 0 disables it.
+   * Extra sinusoidal "wave" tilt applied to the pole direction before cone
+   * placement, to produce undulating / wave-shaped barrages. Amplitude in
+   * degrees, 0 disables it.
    */
   waveAmplitudeDeg: number;
   /** Wave oscillation frequency in Hz (cycles/second). */

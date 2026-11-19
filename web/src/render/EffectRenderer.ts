@@ -4,8 +4,14 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import type { BulletShape, EffectDocument, EffectFrame } from '../core/types';
 import { CameraRig } from './CameraRig';
-import { BulletRenderer, FlashRenderer, TrailRenderer } from './Particles';
+import { BulletRenderer, FlashRenderer, TrailRenderer, type RenderStats } from './Particles';
 import { TRAIL_SAMPLES } from '../core/effects/rotatingBarrage';
+
+export interface FrameRenderStats {
+  bullets: RenderStats;
+  trails: RenderStats;
+  flashes: RenderStats;
+}
 
 function makeStarfield(): THREE.Points {
   const count = 600;
@@ -41,6 +47,11 @@ export class EffectRenderer {
   private trails: TrailRenderer;
   private flashes = new FlashRenderer();
   private container: HTMLElement;
+  private lastStats: FrameRenderStats = {
+    bullets: { computed: 0, rendered: 0 },
+    trails: { computed: 0, rendered: 0 },
+    flashes: { computed: 0, rendered: 0 },
+  };
 
   constructor(container: HTMLElement) {
     this.container = container;
@@ -105,11 +116,18 @@ export class EffectRenderer {
       sizeByLayer.set(layer.id, layer.bullet.size);
     }
 
-    this.bullets.update(frame.bullets, shapeByLayer, sizeByLayer);
-    this.trails.update(frame.trails);
-    this.flashes.update(frame.flashes);
+    this.lastStats = {
+      bullets: this.bullets.update(frame.bullets, shapeByLayer, sizeByLayer),
+      trails: this.trails.update(frame.trails),
+      flashes: this.flashes.update(frame.flashes),
+    };
 
     this.composer.render();
+  }
+
+  /** Simulated-vs-drawn counts from the most recent render() call, for capacity warnings. */
+  getLastStats(): FrameRenderStats {
+    return this.lastStats;
   }
 
   dispose(): void {

@@ -161,8 +161,8 @@ camPos(t)  = rotateAroundAxis(position - target, orbitAxis, angle(t)) + target
 | `interval` | number > 0 (秒) | 発射間隔。 |
 | `direction` | Vec3 | 基準発射方向（正規化して使用）。 |
 | `spreadAngleDeg` | number 0–360 | 拡散角度（円錐の頂角）。半角 = `spreadAngleDeg / 2`。 |
-| `rotationAxis` | Vec3 | 発射方向を回転させる軸（正規化）。 |
-| `rotationSpeedDeg` | number | 発射方向の回転速度（度/秒）。 |
+| `rotationAxis` | Vec3 | 各弾を円錐上に配置した**後**に、その向きを回転させる軸（正規化）。`direction` と同じ軸を指定した場合（既定値）は、弾のリング全体がその場でスピンする「回転連射（カーブショット）」になる。`direction` と異なる軸を指定すると、円錐全体がその軸の周りで首振り（歳差運動）する。詳細と数式の同値性の証明は5.3節。 |
+| `rotationSpeedDeg` | number | `rotationAxis` 周りの回転速度（度/秒）。 |
 | `waveAmplitudeDeg` | number ≥ 0 | 追加の波打ちチルトの振幅（度）。0で無効。 |
 | `waveFrequencyHz` | number ≥ 0 | 波打ちの周波数（Hz）。 |
 | `waveAxis` | Vec3 | 波打ちチルトの回転軸（`rotationAxis` とは独立）。 |
@@ -289,11 +289,9 @@ for s in sMin..sMax:
     if age < 0 or age > bullet.lifetime: continue      # まだ発射前 or 寿命切れ
 
     baseDir   = normalize(emitter.direction)
-    steadyDir = rotateAroundAxis(baseDir, emitter.rotationAxis,
-                                  emitter.rotationSpeedDeg * shotTime)
     waveAngle = emitter.waveAmplitudeDeg
                 * sin(2*PI * emitter.waveFrequencyHz * shotTime)
-    centralDir = rotateAroundAxis(steadyDir, emitter.waveAxis, waveAngle)
+    tiltedDir = rotateAroundAxis(baseDir, emitter.waveAxis, waveAngle)
 
     for b in 0..emitter.count-1:
         baseAzimuth  = (360 / emitter.count) * b
@@ -301,7 +299,14 @@ for s in sMin..sMax:
         jitterSpread = hashToSigned(seed, layerKey, s, b, SALT_SPREAD)  * emitter.spreadJitterDeg
         halfAngle    = max(0, emitter.spreadAngleDeg/2 + jitterSpread)
         azimuth      = baseAzimuth + jitterAz
-        dir          = coneDirection(centralDir, halfAngle, azimuth)
+        coneDir      = coneDirection(tiltedDir, halfAngle, azimuth)
+
+        # 円錐上に配置した「後」に rotationAxis 周りへ回転させる。これが
+        # 5.3.1節で証明する通り、rotationAxis == tiltedDir（典型的には
+        # rotationAxis == direction）のとき「azimuth に
+        # rotationSpeedDeg*shotTime を足す」のと完全に同値になる。
+        dir          = rotateAroundAxis(coneDir, emitter.rotationAxis,
+                                         emitter.rotationSpeedDeg * shotTime)
 
         speedJitter  = hashToSigned(seed, layerKey, s, b, SALT_SPEED) * bullet.speedJitter
         speed        = bullet.speed * (1 + speedJitter)
@@ -314,6 +319,49 @@ for s in sMin..sMax:
         # => この (position, dir, color, opacity, scale, bullet.glowIntensity) が
         #    1個の弾の、時刻 time における完全な状態。
 ```
+
+#### 5.3.1 `rotationAxis` が `tiltedDir` と一致する場合の同値性
+
+上記で「円錐上に配置した後に `rotationAxis` 周りで回転させる」という順序を
+採用しているのには理由がある。もし代わりに「`direction` 自体を
+`rotationAxis` 周りで回転させてから円錐上に配置する」実装にすると、
+**`rotationAxis` が `direction` と平行なとき、回転は見た目上まったく効果が
+ない**（軸と平行なベクトルをその軸周りに回転させても変化しないため）。
+典型的な「その場でリングが回転する」設定（`rotationAxis == direction`、
+既定値はまさにこれ）がちょうどこの退化ケースに当たってしまう。
+
+本仕様（円錐配置 → 回転の順）ではこの問題が起きない。証明:
+
+`tiltedDir` を `d`、円錐配置で使う正規直交基底を `(u, v, d)`（`coneDirection`
+が内部で構築するもの）とすると、配置後の方向は
+
+```
+coneDir = d*cos(half) + (u*cos(az) + v*sin(az))*sin(half)
+```
+
+`rotationAxis = d` のとき、`rotateAroundAxis(coneDir, d, θ)` は `d` 成分
+（`cos(half)*d`）を変化させず、`(u, v)` 平面内の成分だけを
+`θ` 回転させる。`(u, v, d)` は右手系の正規直交基底なので、この回転は
+ちょうど
+
+```
+u*cos(az) + v*sin(az)  →  u*cos(az+θ) + v*sin(az+θ)
+```
+
+という変換になる（2次元回転と同じ代数）。つまり
+
+```
+rotateAroundAxis(coneDir, d, θ) == coneDirection(d, half, az + θ)
+```
+
+が厳密に成り立つ。`θ = rotationSpeedDeg * shotTime` なので、
+**`rotationAxis == tiltedDir` のとき、本アルゴリズムは「`azimuth` に
+`rotationSpeedDeg * shotTime` を足すだけ」と完全に同値** — すなわち
+軸がどの向きであっても回転が必ず効果を持つ。一方 `rotationAxis` が
+`tiltedDir` と異なる場合は、配置後の方向ベクトルをその軸周りに回転させる
+ことになり、円錐全体が歳差運動のように首振りする（多層立体弾幕プリセット
+の層Bなどで利用）。どちらの場合も自然で連続的な動きになり、特殊なケース
+分けは不要。
 
 `animEnvelope` は出現・消滅演出（`spawnAnim`）に応じて `opacity` と `scale`
 （ともに初期値1）を次のように減衰させる:
@@ -358,7 +406,9 @@ for i in 0..TRAIL_SAMPLES-1:
 
 ---
 
-## 6. 再現性についての注意
+## 6. 再現性についての注意・検証データ
+
+### 6.1 再現性の保証範囲
 
 - 同じ `EffectDocument`（JSON全体）と同じ `time` を入力すれば、本仕様に従う
   限り実装言語やレンダラが変わっても同じ `(position, direction, color,
@@ -370,6 +420,76 @@ for i in 0..TRAIL_SAMPLES-1:
 - 浮動小数点演算の丸め誤差により、言語間で完全なビット一致はしない場合が
   あるが、見た目上の差は生じない程度に収束する。
 
+### 6.2 手計算で検証できる最小例（回転サニティチェック）
+
+5.3.1節の同値性を疑わずに信じる必要はない。以下は `count=1`（1ショット1発）
+・ジッターなし・`rotationAxis == direction` という最小構成での、手計算可能な
+具体例である。実データは `web/test/golden/rotation-sanity.json` に
+（この設定の `EffectDocument` 全体と、複数時刻での計算結果として）保存され
+ている。Blender側の実装者は、同じ `doc` を自分の実装に読み込ませて
+同じ `time` で評価し、以下の値と一致するかどうかで実装を検証できる。
+
+設定（抜粋）:
+
+```
+direction        = (0, 1, 0)
+rotationAxis     = (0, 1, 0)   # directionと同じ軸（かつてバグで無効化されていたケース）
+rotationSpeedDeg = 90
+spreadAngleDeg   = 60          # halfAngle = 30°
+count            = 1           # bulletIndex = 0, baseAzimuth = 0, ジッターなし
+interval         = 1.0
+```
+
+`direction = (0,1,0)` はワールドアップと平行なので、`coneDirection` は
+特異点回避のため `referenceUp = (1,0,0)` を使う（2.1節／5.1節参照）。これにより
+正規直交基底は `u=(0,0,1)`, `v=(1,0,0)`, `d=(0,1,0)` となり、
+`halfAngle=30°, azimuth=0°` の円錐上の点は
+
+```
+coneDir = d*cos(30°) + u*sin(30°) = (0, 0.8660, 0.5)
+```
+
+（`u*cos(0)+v*sin(0) = u` なので、半径成分は `u` そのもの）。
+
+ショット `s` の発射時刻は `shotTime = s * 1.0 = s` 秒なので、
+`rotationAxis=(0,1,0)` 周りに `90° * s` 回転させると:
+
+| shotIndex `s` | 回転角 | `direction`（最終的な弾の進行方向） |
+|---|---|---|
+| 0 | 0° | `(0, 0.8660, 0.5)` |
+| 1 | 90° | `(0.5, 0.8660, 0)` |
+| 2 | 180° | `(0, 0.8660, -0.5)` |
+| 3 | 270° | `(-0.5, 0.8660, 0)` |
+| 4 | 360°（= 0°と同じ） | `(0, 0.8660, 0.5)`（s=0と一致、周期性の確認） |
+
+`web/test/golden/rotation-sanity.json` の `time=4` のサンプルには
+`shotIndex` 0〜4 の弾がすべて（寿命10秒のため）生存しており、実際に
+この表の通りの `direction` が記録されている
+（`web/test/simulation.test.ts` が自動検証）。
+
+### 6.3 ゴールデンフィクスチャ（自動テスト・Blender側検証データ）
+
+`web/test/golden/*.json` に、5つのプリセットそれぞれ＋上記の回転
+サニティチェック用の、入力 `doc` と複数時刻での期待出力 `samples` を
+セットにした「正解データ」を同梱している。
+
+- 生成コマンド: `npm run gen:golden`（`web/scripts/genGolden.ts`）。
+  計算アルゴリズム（5章）を意図的に変更した場合は、このコマンドを再実行して
+  フィクスチャを更新し、**この仕様書の5章も合わせて更新すること**。
+- ファイルサイズを抑えるため、`samples[].frame` 内の数値はすべて小数点
+  以下6桁に丸め、各弾の軌跡（`trails[].points`）は8点のうち最初と最後の
+  点だけを残している（`bullets` の `position`/`direction` は丸め以外の
+  加工なし）。自動テストはこの丸め・間引きを踏まえた許容誤差（1e-5）で比較
+  している。
+- 自動テスト: `npm test`（`web/test/simulation.test.ts`）が、各フィクス
+  チャの `doc` を実際に `computeEffectFrame` へ再入力し、保存済みの
+  `samples` と数値的に一致する（許容誤差 1e-9）ことを検証する。これにより
+  計算アルゴリズムの意図しない回帰（例: 今回発見された回転バグの再発）を
+  検出する。
+- Blender側の実装者は、各フィクスチャの `doc` をそのままPython実装に読み込
+  ませ、同じ `samples[].time` で評価した結果を突き合わせることで、移植が
+  正しいかどうかを独立に検証できる。
+
 ## 7. 既知の制約・今回のスコープ外
 
 - 乱数はすべて `Math.imul` 相当の32bit整数演算に依存しているため、Python側
@@ -378,3 +498,17 @@ for i in 0..TRAIL_SAMPLES-1:
 - `effectType` は現状 `"rotating_barrage"` のみ。将来追加される種別
   （雷・斬撃・爆発・魔法陣など）は、この5章と同じ形式で別ファイルとして
   仕様化する想定（`web/src/core/effects/registry.ts` の拡張ポイントに対応）。
+- シミュレーション（5章）は弾数に上限を設けていないが、**描画側
+  （Three.jsレンダラ）には1形状あたり弾6000個・軌跡2500本・マズルフラッシュ
+  128個という描画上限がある**（`web/src/render/Particles.ts` の
+  `RENDER_CAPACITY`）。発射間隔を極端に短くする、寿命を極端に長くするなど
+  してこの上限を超えると、計算上は存在するが画面には描画されない弾が生じる。
+  その場合はプレビュー画面上部に警告バナーが表示され、計算上の個数と実際に
+  描画された個数が明示される。JSONの書き出し内容自体には影響しない
+  （書き出されるのはあくまで5章のアルゴリズムで計算される設定値であり、
+  描画上限とは独立）。
+- JSON読み込み時は、数値の範囲・列挙値・ベクトルの要素数・色コード形式・
+  レイヤーIDの重複などを検証し、不正な値は妥当な既定値へ自動調整したうえで
+  警告メッセージを表示する（`web/src/io/sanitize.ts`）。検証範囲（最小値・
+  最大値）は `web/src/core/limits.ts` に一元化されており、設定パネルの
+  スライダーの可動域と常に一致する。

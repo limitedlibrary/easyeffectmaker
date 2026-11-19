@@ -82,7 +82,21 @@ function geometryForShape(shape: BulletShape): THREE.BufferGeometry {
 }
 
 const SHAPES: BulletShape[] = ['sphere', 'box', 'octahedron', 'sprite'];
-const MAX_INSTANCES = 4000;
+
+/** How many bullets/trails/flashes the renderer can actually draw per shape/type. */
+export const RENDER_CAPACITY = {
+  bulletsPerShape: 6000,
+  trails: 2500,
+  flashes: 128,
+} as const;
+
+const MAX_INSTANCES = RENDER_CAPACITY.bulletsPerShape;
+
+/** Simulated-vs-drawn counts for one frame, used to warn the user when the simulation outruns render capacity. */
+export interface RenderStats {
+  computed: number;
+  rendered: number;
+}
 
 interface ShapeBucket {
   mesh: THREE.InstancedMesh;
@@ -130,15 +144,17 @@ export class BulletRenderer {
     }
   }
 
-  update(bullets: BulletState[], shapeByLayer: Map<string, BulletShape>, sizeByLayer: Map<string, number>): void {
+  update(bullets: BulletState[], shapeByLayer: Map<string, BulletShape>, sizeByLayer: Map<string, number>): RenderStats {
     for (const bucket of this.buckets.values()) bucket.cursor = 0;
 
     const color = new THREE.Color();
+    let rendered = 0;
     for (const bullet of bullets) {
       const shape = shapeByLayer.get(bullet.layerId) ?? 'sphere';
       const bucket = this.buckets.get(shape)!;
       if (bucket.cursor >= MAX_INSTANCES) continue;
       const i = bucket.cursor++;
+      rendered++;
 
       const size = (sizeByLayer.get(bullet.layerId) ?? 0.1) * bullet.scale;
       bucket.dummy.position.set(...bullet.position);
@@ -167,6 +183,8 @@ export class BulletRenderer {
       bucket.alphaAttr.needsUpdate = true;
       bucket.glowAttr.needsUpdate = true;
     }
+
+    return { computed: bullets.length, rendered };
   }
 
   dispose(): void {
@@ -197,7 +215,7 @@ const TRAIL_LINE_FRAGMENT = /* glsl */ `
   }
 `;
 
-const MAX_TRAILS = 1500;
+const MAX_TRAILS = RENDER_CAPACITY.trails;
 
 /** Renders each bullet's recent-path trail as a fading additive line strip, rebuilt every frame. */
 export class TrailRenderer {
@@ -233,18 +251,21 @@ export class TrailRenderer {
     this.mesh.frustumCulled = false;
   }
 
-  update(trails: BulletTrail[]): void {
+  update(trails: BulletTrail[]): RenderStats {
     const posAttr = this.geometry.getAttribute('position') as THREE.BufferAttribute;
     const colAttr = this.geometry.getAttribute('color') as THREE.BufferAttribute;
     const alphaAttr = this.geometry.getAttribute('alpha') as THREE.BufferAttribute;
 
     const color = new THREE.Color();
     let vertCursor = 0;
+    let rendered = 0;
     for (const trail of trails) {
-      color.set(trail.color);
       const pts = trail.points;
+      const neededVerts = (pts.length - 1) * 2;
+      if (vertCursor + neededVerts > this.maxVerts) break; // this trail (and all after it) would overflow the budget
+
+      color.set(trail.color);
       for (let i = 0; i < pts.length - 1; i++) {
-        if (vertCursor + 2 > this.maxVerts) break;
         const a = pts[i];
         const b = pts[i + 1];
         posAttr.setXYZ(vertCursor, a.position[0], a.position[1], a.position[2]);
@@ -256,13 +277,15 @@ export class TrailRenderer {
         alphaAttr.setX(vertCursor + 1, b.t * b.t * 0.5);
         vertCursor += 2;
       }
-      if (vertCursor >= this.maxVerts) break;
+      rendered++;
     }
 
     this.geometry.setDrawRange(0, vertCursor);
     posAttr.needsUpdate = true;
     colAttr.needsUpdate = true;
     alphaAttr.needsUpdate = true;
+
+    return { computed: trails.length, rendered };
   }
 
   dispose(): void {
@@ -271,7 +294,7 @@ export class TrailRenderer {
   }
 }
 
-const MAX_FLASHES = 128;
+const MAX_FLASHES = RENDER_CAPACITY.flashes;
 
 /** Instanced camera-facing glow quads for muzzle flashes. */
 export class FlashRenderer {
@@ -307,7 +330,7 @@ export class FlashRenderer {
     this.mesh.count = 0;
   }
 
-  update(flashes: FlashEvent[]): void {
+  update(flashes: FlashEvent[]): RenderStats {
     const color = new THREE.Color();
     const n = Math.min(flashes.length, MAX_FLASHES);
     for (let i = 0; i < n; i++) {
@@ -329,6 +352,8 @@ export class FlashRenderer {
     this.colorAttr.needsUpdate = true;
     this.alphaAttr.needsUpdate = true;
     this.glowAttr.needsUpdate = true;
+
+    return { computed: flashes.length, rendered: n };
   }
 
   dispose(): void {

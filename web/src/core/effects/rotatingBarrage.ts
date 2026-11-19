@@ -65,9 +65,8 @@ function resolveBullet(
   const shotTime = layer.startDelaySec + shotIndex * emitter.interval;
 
   const baseDir = normalize(emitter.direction);
-  const steadyDir = rotateAroundAxis(baseDir, emitter.rotationAxis, emitter.rotationSpeedDeg * shotTime);
   const waveAngle = emitter.waveAmplitudeDeg * Math.sin(2 * Math.PI * emitter.waveFrequencyHz * shotTime);
-  const centralDir = rotateAroundAxis(steadyDir, emitter.waveAxis, waveAngle);
+  const tiltedDir = rotateAroundAxis(baseDir, emitter.waveAxis, waveAngle);
 
   const count = Math.max(1, emitter.count);
   const baseAzimuth = (360 / count) * bulletIndex;
@@ -75,7 +74,18 @@ function resolveBullet(
   const jitterSpread = hashToSigned(doc.seed, layerKey, shotIndex, bulletIndex, RandomSalt.SPREAD) * emitter.spreadJitterDeg;
   const halfAngle = Math.max(0, emitter.spreadAngleDeg / 2 + jitterSpread);
   const azimuth = baseAzimuth + jitterAz;
-  const dir = coneDirection(centralDir, halfAngle, azimuth);
+  const coneDir = coneDirection(tiltedDir, halfAngle, azimuth);
+
+  // Spin the already-placed bullet direction around rotationAxis as shotTime
+  // advances. When rotationAxis is parallel to the cone's pole (tiltedDir,
+  // e.g. the common "direction == rotationAxis" case), this is mathematically
+  // identical to adding rotationSpeedDeg * shotTime to the azimuth above --
+  // i.e. a classic danmaku curve/rotating shot -- so rotation is never a
+  // no-op purely because the axis matches the firing direction. When
+  // rotationAxis differs from the pole, the whole cone precesses around it
+  // instead, which is used for the multi-layer 3D preset. See
+  // docs/json-spec.md 5.3 for the proof of this equivalence.
+  const dir = rotateAroundAxis(coneDir, emitter.rotationAxis, emitter.rotationSpeedDeg * shotTime);
 
   const speedJitter = hashToSigned(doc.seed, layerKey, shotIndex, bulletIndex, RandomSalt.SPEED) * bullet.speedJitter;
   const speed = bullet.speed * (1 + speedJitter);

@@ -4,6 +4,7 @@ import { EffectRenderer } from './render/EffectRenderer';
 import { computeEffectFrame } from './core/effects/registry';
 import { Panel } from './ui/Panel';
 import { Timeline } from './ui/Timeline';
+import { WarningBanner } from './ui/WarningBanner';
 
 const state = new AppState();
 
@@ -12,6 +13,9 @@ const sidebar = document.getElementById('sidebar') as HTMLElement;
 const transportHost = document.getElementById('transport-host') as HTMLElement;
 
 const renderer = new EffectRenderer(viewport);
+
+const warningBanner = new WarningBanner();
+viewport.appendChild(warningBanner.el);
 
 const panel = new Panel(state, {
   isFreeCamera: () => renderer.isFreeCamera(),
@@ -43,6 +47,7 @@ function frame(now: number): void {
   state.advance(dt);
   const effectFrame = computeEffectFrame(state.doc, state.playback.time);
   renderer.render(state.doc, effectFrame);
+  warningBanner.update(renderer.getLastStats());
   timeline.tick();
 
   requestAnimationFrame(frame);
